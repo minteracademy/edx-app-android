@@ -1,12 +1,13 @@
 package org.edx.mobile.notifications.services;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
+import org.edx.mobile.logger.Logger;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -15,25 +16,21 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.edx.mobile.R;
 import org.edx.mobile.base.MainApplication;
 import org.edx.mobile.core.IEdxEnvironment;
+import org.edx.mobile.view.DiscoveryLaunchActivity;
 import org.edx.mobile.view.MainDashboardActivity;
+import org.edx.mobile.view.SplashActivity;
 
 
 public class NotificationService extends FirebaseMessagingService {
     public static final String NOTIFICATION_TOPIC_RELEASE = "edx_release_notification";
-
-    public static void subscribeToTopics(IEdxEnvironment environment){
-        if(environment.getConfig().areNotificationsEnabled()) {
-            FirebaseMessaging.getInstance().subscribeToTopic(
-                    NotificationService.NOTIFICATION_TOPIC_RELEASE
-            );
-        }
-    }
+    private static final int NOTIFICATION_ID = 999;
+    protected static final Logger logger = new Logger(NotificationService.class.getName());
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         IEdxEnvironment environment = MainApplication.getEnvironment(this);
 
-        if(!environment.getConfig().areNotificationsEnabled()){
+        if(!environment.getConfig().getFirebaseConfig().areNotificationsEnabled()){
             // Do not process Notifications when they are disabled.
             return;
         }
@@ -41,8 +38,9 @@ public class NotificationService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         if (remoteMessage.getNotification() != null) {
-            Log.d(this.getClass().getSimpleName(),
-                    "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            logger.debug(
+                    "Message Notification Body: " + remoteMessage.getNotification().getBody()
+            );
         }
 
         // Build out the Notification and set the intent to direct the user to the application
@@ -51,11 +49,11 @@ public class NotificationService extends FirebaseMessagingService {
                         .setSmallIcon(R.drawable.ic_notification)
                         .setContentTitle(remoteMessage.getNotification().getTitle())
                         .setContentText(remoteMessage.getNotification().getBody());
-        Intent resultIntent = new Intent(this, MainDashboardActivity.class);
+        Intent resultIntent = new Intent(this, SplashActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MainDashboardActivity.class);
+        stackBuilder.addParentStack(DiscoveryLaunchActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
@@ -67,14 +65,20 @@ public class NotificationService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // mNotificationId is a unique integer your app uses to identify the
+        // NotificationId is a unique integer your app uses to identify the
         // notification. For example, to cancel the notification, you can pass its ID
-        // number to NotificationManager.cancel().
-        try {
-            notificationManager.notify(99, builder.build());
-        } catch (NullPointerException ex) {
-            Log.e(this.getClass().getSimpleName(), ex.getMessage());
+        // number to NotificationManager.cancel(). We are currently using a hard coded
+        // id, this could be improved in the future if we have Notification IDs added.
+        Notification notification = builder.build();
+        if(notification != null){
+            try {
+                notificationManager.notify(NOTIFICATION_ID, notification);
+            } catch (NullPointerException ex){
+                logger.error(ex);
+            }
         }
+
+
 
     }
 }

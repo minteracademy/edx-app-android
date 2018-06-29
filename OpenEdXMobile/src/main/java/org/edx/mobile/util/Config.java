@@ -54,6 +54,7 @@ public class Config {
     private static final String FABRIC = "FABRIC";
     private static final String NEW_RELIC = "NEW_RELIC";
     private static final String SEGMENT_IO = "SEGMENT_IO";
+    private static final String FIREBASE = "FIREBASE";
     private static final String PUSH_NOTIFICATIONS_FLAG = "PUSH_NOTIFICATIONS";
     private static final String WHITE_LIST_OF_DOMAINS = "WHITE_LIST_OF_DOMAINS";
 
@@ -67,8 +68,6 @@ public class Config {
     private static final String NEW_LOGISTRATION_ENABLED = "NEW_LOGISTRATION_ENABLED";
     private static final String DISCUSSIONS_ENABLE_PROFILE_PICTURE_PARAM = "DISCUSSIONS_ENABLE_PROFILE_PICTURE_PARAM";
     private static final String REGISTRATION_ENABLED = "REGISTRATION_ENABLED";
-    private static final String FIREBASE_ENABLED = "FIREBASE_ENABLED";
-    private static final String NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED";
     private static final String APP_REVIEWS_ENABLED = "APP_REVIEWS_ENABLED";
     private static final String VIDEO_TRANSCRIPT_ENABLED = "VIDEO_TRANSCRIPT_ENABLED";
     private static final String USING_VIDEO_PIPELINE = "USING_VIDEO_PIPELINE";
@@ -396,6 +395,22 @@ public class Config {
         }
     }
 
+    public static class FirebaseConfig {
+        @SerializedName("ENABLED")
+        private boolean mEnabled;
+
+        @SerializedName("PUSH_NOTIFICATIONS")
+        private boolean mPushNotifications;
+
+        public boolean isEnabled(){
+            return mEnabled;
+        }
+
+        public boolean areNotificationsEnabled(){
+            return mEnabled && mPushNotifications;
+        }
+    }
+
     @Inject
     public Config(Context context) {
         try {
@@ -504,7 +519,7 @@ public class Config {
         return getString(ORGANIZATION_CODE);
     }
 
-    public boolean isNotificationEnabled() {
+    public boolean arePushNotificationEnabled() {
         return getBoolean(PUSH_NOTIFICATIONS_FLAG, false);
     }
 
@@ -552,14 +567,6 @@ public class Config {
 
     public boolean isCourseSharingEnabled() {
         return getBoolean(COURSE_SHARING_ENABLED, false);
-    }
-
-    public boolean isFirebaseEnabled() {
-        return getBoolean(FIREBASE_ENABLED, false);
-    }
-
-    public boolean areNotificationsEnabled(){
-        return getBoolean(NOTIFICATIONS_ENABLED, false) && isFirebaseEnabled();
     }
 
     public boolean isVideoTranscriptEnabled() {
@@ -620,6 +627,11 @@ public class Config {
     @NonNull
     public SegmentConfig getSegmentConfig() {
         return getObjectOrNewInstance(SEGMENT_IO, SegmentConfig.class);
+    }
+
+    @NonNull
+    public FirebaseConfig getFirebaseConfig(){
+        return getObjectOrNewInstance(FIREBASE, FirebaseConfig.class);
     }
 
     @NonNull

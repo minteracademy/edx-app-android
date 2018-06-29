@@ -26,6 +26,7 @@ import org.edx.mobile.notifications.services.NotificationService;
 import org.edx.mobile.util.AppConstants;
 import org.edx.mobile.util.AppStoreUtils;
 import org.edx.mobile.util.IntentFactory;
+import org.edx.mobile.util.NotificationUtil;
 import org.edx.mobile.util.Version;
 
 import java.text.ParseException;
@@ -56,7 +57,7 @@ public class MainDashboardActivity extends OfflineSupportBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NotificationService.subscribeToTopics(environment);
+        NotificationUtil.subscribeToTopics(environment);
         initWhatsNew();
         addClickListenerOnProfileButton();
     }
