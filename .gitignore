@@ -63,3 +63,6 @@ gradle.properties
 
 # reports directory
 /artifacts
+
+# Server configuration files
+interacademy_config/

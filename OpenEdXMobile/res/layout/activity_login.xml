@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:contentDescription="@string/phonetic_app_name"
-                        android:src="@drawable/login_screen_logo" />
+                        android:src="@drawable/launch_screen_logo_mia" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -152,7 +152,11 @@
                         style="@style/agreement_text_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/by_signing_in" />
+                        android:text="@string/by_signing_in"
+                        android:linksClickable="false"
+                        android:clickable="false"
+                        android:enabled="false"
+                        />
 
                     <TextView
                         android:id="@+id/version_env_tv"

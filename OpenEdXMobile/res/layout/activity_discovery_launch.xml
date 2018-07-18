@@ -26,7 +26,7 @@
                 android:layout_height="@dimen/logo_height"
                 android:layout_marginTop="@dimen/logo_top_margin"
                 android:contentDescription="@string/phonetic_app_name"
-                android:src="@drawable/launch_screen_logo" />
+                android:src="@drawable/launch_screen_logo_mia" />
 
             <TextView
                 android:id="@+id/tv_launch_text"
